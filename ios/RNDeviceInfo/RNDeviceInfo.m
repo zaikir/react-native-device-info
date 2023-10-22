@@ -16,6 +16,7 @@
 #import "DeviceUID.h"
 #import <DeviceCheck/DeviceCheck.h>
 #import "EnvironmentUtil.h"
+#import "SystemServices.h"
 
 #if !(TARGET_OS_TV)
 #import <WebKit/WebKit.h>
@@ -427,6 +428,46 @@ RCT_EXPORT_METHOD(isEmulator:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromis
         return NO;
     }
 }
+
+
+RCT_EXPORT_METHOD(getFreeMemory:(RCTPromiseResolveBlock) resolve getFreeMemoryRejector:(RCTPromiseRejectBlock) reject) {
+    double value = [SystemServices sharedServices].freeMemoryinRaw + [SystemServices sharedServices].inactiveMemoryinRaw;
+    resolve(@(value));
+}
+
+RCT_EXPORT_METHOD(getSystemUptime:(RCTPromiseResolveBlock) resolve getSystemUptimeRejector:(RCTPromiseRejectBlock) reject) {
+    NSString * value = [SystemServices sharedServices].systemsUptime;
+    resolve(value);
+}
+
++ (NSString *) wrapString:(NSString *) str {
+    if (str == nil || str.length <= 0) {
+        return @"";
+    }
+
+    return str;
+}
+
+RCT_EXPORT_METHOD(getNetworkInfo:(RCTPromiseResolveBlock) resolve getNetworkInfoRejector:(RCTPromiseRejectBlock) reject) {
+    resolve(@{
+        @"carrierName": [AppOptimizer wrapString:([SystemServices sharedServices].carrierName)],
+        @"carrierCountry": [AppOptimizer wrapString:([SystemServices sharedServices].carrierCountry)],
+        @"carrierMobileCountryCode": [AppOptimizer wrapString:([SystemServices sharedServices].carrierMobileCountryCode)],
+        @"carrierISOCountryCode": [AppOptimizer wrapString:([SystemServices sharedServices].carrierISOCountryCode)],
+        @"carrierMobileNetworkCode": [AppOptimizer wrapString:([SystemServices sharedServices].carrierMobileNetworkCode)],
+        @"currentIPAddress": [AppOptimizer wrapString:([SystemServices sharedServices].currentIPAddress)],
+        @"externalIPAddress": [AppOptimizer wrapString:([SystemServices sharedServices].externalIPAddress)],
+        @"cellIPAddress": [AppOptimizer wrapString:([SystemServices sharedServices].cellIPAddress)],
+        @"cellNetmaskAddress": [AppOptimizer wrapString:([SystemServices sharedServices].cellNetmaskAddress)],
+        @"cellBroadcastAddress": [AppOptimizer wrapString:([SystemServices sharedServices].cellBroadcastAddress)],
+        @"connectedToWiFi": [AppOptimizer wrapString:([SystemServices sharedServices].connectedToWiFi ? @"Yes" : @"No")],
+        @"wiFiIPAddress": [AppOptimizer wrapString:([SystemServices sharedServices].wiFiIPAddress)],
+        @"wiFiNetmaskAddress": [AppOptimizer wrapString:([SystemServices sharedServices].wiFiNetmaskAddress)],
+        @"wiFiBroadcastAddress": [AppOptimizer wrapString:([SystemServices sharedServices].wiFiBroadcastAddress)],
+        @"wiFiRouterAddress": [AppOptimizer wrapString:([SystemServices sharedServices].wiFiRouterAddress)],
+    });
+}
+
 
 RCT_EXPORT_METHOD(getDeviceToken:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
     if (@available(iOS 11.0, *)) {

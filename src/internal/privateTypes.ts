@@ -37,7 +37,28 @@ interface HiddenNativeMethods {
   getSystemManufacturerSync: () => string;
 }
 
+interface NetworkInfo {
+  carrierName: string
+  carrierCountry: string,
+  carrierMobileCountryCode: string,
+  carrierISOCountryCode: string,
+  carrierMobileNetworkCode: string,
+  currentIPAddress: string,
+  externalIPAddress: string,
+  cellIPAddress: string,
+  cellNetmaskAddress: string,
+  cellBroadcastAddress: string,
+  connectedToWiFi: string,
+  wiFiIPAddress: string,
+  wiFiNetmaskAddress: string,
+  wiFiBroadcastAddress: string,
+  wiFiRouterAddress: string,
+}
+
 interface ExposedNativeMethods {
+  getFreeMemory: () => Promise<number>;
+  getSystemUptime:() => Promise<string>;
+  getNetworkInfo:() => Promise<NetworkInfo>;
   getAndroidId: () => Promise<string>;
   getAndroidIdSync: () => string;
   getApiLevel: () => Promise<number>;

@@ -736,6 +736,29 @@ export async function getDeviceToken() {
   return 'unknown';
 }
 
+export const [getFreeMemory, getFreeMemorySync] = getSupportedPlatformInfoFunctions({
+  supportedPlatforms: ['ios'],
+  getter: () => RNDeviceInfo.getFreeMemory(),
+  syncGetter: () => -1,
+  defaultValue: -1,
+});
+
+export const [getSystemUptime, getSystemUptimeSync] = getSupportedPlatformInfoFunctions({
+  supportedPlatforms: ['ios'],
+  getter: () => RNDeviceInfo.getSystemUptime(),
+  syncGetter: () => '',
+  defaultValue: '',
+});
+
+export const [getNetworkInfo, getgetNetworkInfoSync] = getSupportedPlatformInfoFunctions({
+  supportedPlatforms: ['ios'],
+  getter: () => RNDeviceInfo.getNetworkInfo(),
+  syncGetter: () => {},
+  defaultValue: {} as any,
+});
+
+
+
 const deviceInfoEmitter = new NativeEventEmitter(NativeModules.RNDeviceInfo);
 export function useBatteryLevel(): number | null {
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
@@ -866,6 +889,9 @@ export function useBrightness(): number | null {
 export type { AsyncHookResult, DeviceType, LocationProviderInfo, PowerState };
 
 const DeviceInfo: DeviceInfoModule = {
+  getFreeMemory,
+  getSystemUptime,
+  getNetworkInfo,
   getAndroidId,
   getAndroidIdSync,
   getApiLevel,
