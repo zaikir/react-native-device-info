@@ -529,14 +529,28 @@ RCT_EXPORT_METHOD(getTotalDiskCapacity:(RCTPromiseResolveBlock)resolve rejecter:
 }
 
 - (double) getFreeDiskStorage {
-    uint64_t freeSpace = 0;
-    NSDictionary *storage = [self getStorageDictionary];
-
-    if (storage) {
-        NSNumber *freeFileSystemSizeInBytes = [storage objectForKey: NSFileSystemFreeSize];
-        freeSpace = [freeFileSystemSizeInBytes unsignedLongLongValue];
+    if (@available(iOS 11.0, *)) {
+        NSURL *homeURL = [NSURL fileURLWithPath:NSHomeDirectory()];
+        NSNumber *space = [homeURL resourceValuesForKeys:@[NSURLVolumeAvailableCapacityForImportantUsageKey] error:nil][NSURLVolumeAvailableCapacityForImportantUsageKey];
+        
+        if (space) {
+            return [space longLongValue];
+        }
+        else {
+            return 0;
+        }
     }
-    return (double) freeSpace;
+    else {
+        NSDictionary *systemAttributes = [[NSFileManager defaultManager] attributesOfFileSystemForPath:NSHomeDirectory() error:nil];
+        NSNumber *freeSpace = [systemAttributes objectForKey:NSFileSystemFreeSize];
+        
+        if (freeSpace) {
+            return [freeSpace longLongValue];
+        }
+        else {
+            return 0;
+        }
+    }
 }
 
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getFreeDiskStorageSync) {
