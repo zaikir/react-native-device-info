@@ -48,7 +48,8 @@
     "build": "bob build",
     "prepare": "bob build",
     "ci:install": "rm -rf ./node_modules && yarn install --frozen-lockfile",
-    "ci:shipit": "semantic-release"
+    "ci:shipit": "semantic-release",
+    "release": "npm publish --access public"
   },
   "lint-staged": {
     "*.ts": [
