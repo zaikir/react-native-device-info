@@ -440,7 +440,7 @@ RCT_EXPORT_METHOD(getSystemUptime:(RCTPromiseResolveBlock) resolve getSystemUpti
     resolve(value);
 }
 
-+ (NSString *) wrapString:(NSString *) str {
+- (NSString *) wrapString:(NSString *) str {
     if (str == nil || str.length <= 0) {
         return @"";
     }
@@ -450,21 +450,21 @@ RCT_EXPORT_METHOD(getSystemUptime:(RCTPromiseResolveBlock) resolve getSystemUpti
 
 RCT_EXPORT_METHOD(getNetworkInfo:(RCTPromiseResolveBlock) resolve getNetworkInfoRejector:(RCTPromiseRejectBlock) reject) {
     resolve(@{
-        @"carrierName": [AppOptimizer wrapString:([SystemServices sharedServices].carrierName)],
-        @"carrierCountry": [AppOptimizer wrapString:([SystemServices sharedServices].carrierCountry)],
-        @"carrierMobileCountryCode": [AppOptimizer wrapString:([SystemServices sharedServices].carrierMobileCountryCode)],
-        @"carrierISOCountryCode": [AppOptimizer wrapString:([SystemServices sharedServices].carrierISOCountryCode)],
-        @"carrierMobileNetworkCode": [AppOptimizer wrapString:([SystemServices sharedServices].carrierMobileNetworkCode)],
-        @"currentIPAddress": [AppOptimizer wrapString:([SystemServices sharedServices].currentIPAddress)],
-        @"externalIPAddress": [AppOptimizer wrapString:([SystemServices sharedServices].externalIPAddress)],
-        @"cellIPAddress": [AppOptimizer wrapString:([SystemServices sharedServices].cellIPAddress)],
-        @"cellNetmaskAddress": [AppOptimizer wrapString:([SystemServices sharedServices].cellNetmaskAddress)],
-        @"cellBroadcastAddress": [AppOptimizer wrapString:([SystemServices sharedServices].cellBroadcastAddress)],
-        @"connectedToWiFi": [AppOptimizer wrapString:([SystemServices sharedServices].connectedToWiFi ? @"Yes" : @"No")],
-        @"wiFiIPAddress": [AppOptimizer wrapString:([SystemServices sharedServices].wiFiIPAddress)],
-        @"wiFiNetmaskAddress": [AppOptimizer wrapString:([SystemServices sharedServices].wiFiNetmaskAddress)],
-        @"wiFiBroadcastAddress": [AppOptimizer wrapString:([SystemServices sharedServices].wiFiBroadcastAddress)],
-        @"wiFiRouterAddress": [AppOptimizer wrapString:([SystemServices sharedServices].wiFiRouterAddress)],
+        @"carrierName": [self wrapString:([SystemServices sharedServices].carrierName)],
+        @"carrierCountry": [self wrapString:([SystemServices sharedServices].carrierCountry)],
+        @"carrierMobileCountryCode": [self wrapString:([SystemServices sharedServices].carrierMobileCountryCode)],
+        @"carrierISOCountryCode": [self wrapString:([SystemServices sharedServices].carrierISOCountryCode)],
+        @"carrierMobileNetworkCode": [self wrapString:([SystemServices sharedServices].carrierMobileNetworkCode)],
+        @"currentIPAddress": [self wrapString:([SystemServices sharedServices].currentIPAddress)],
+        @"externalIPAddress": [self wrapString:([SystemServices sharedServices].externalIPAddress)],
+        @"cellIPAddress": [self wrapString:([SystemServices sharedServices].cellIPAddress)],
+        @"cellNetmaskAddress": [self wrapString:([SystemServices sharedServices].cellNetmaskAddress)],
+        @"cellBroadcastAddress": [self wrapString:([SystemServices sharedServices].cellBroadcastAddress)],
+        @"connectedToWiFi": [self wrapString:([SystemServices sharedServices].connectedToWiFi ? @"Yes" : @"No")],
+        @"wiFiIPAddress": [self wrapString:([SystemServices sharedServices].wiFiIPAddress)],
+        @"wiFiNetmaskAddress": [self wrapString:([SystemServices sharedServices].wiFiNetmaskAddress)],
+        @"wiFiBroadcastAddress": [self wrapString:([SystemServices sharedServices].wiFiBroadcastAddress)],
+        @"wiFiRouterAddress": [self wrapString:([SystemServices sharedServices].wiFiRouterAddress)],
     });
 }
 
