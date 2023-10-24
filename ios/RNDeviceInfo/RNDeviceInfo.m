@@ -436,7 +436,7 @@ RCT_EXPORT_METHOD(getMemoryUsage:(RCTPromiseResolveBlock) resolve getMemoryUsage
 
     kern_return_t kr = host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&info, &count);
     if (kr != KERN_SUCCESS) {
-        reject(@"Error");
+        reject(@"Error", @"Unknown error", @"Unknown error");
         return;
     }
 
