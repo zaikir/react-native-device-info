@@ -14,6 +14,8 @@ import type {
   AsyncHookResult,
   DeviceType,
   LocationProviderInfo,
+  MemoryUsageInfo,
+  NetworkInfo,
   PowerState,
 } from './internal/types';
 
@@ -736,35 +738,34 @@ export async function getDeviceToken() {
   return 'unknown';
 }
 
-export const [getFreeMemory, getFreeMemorySync] = getSupportedPlatformInfoFunctions({
-  supportedPlatforms: ['ios'],
-  getter: () => RNDeviceInfo.getFreeMemory(),
-  syncGetter: () => -1,
-  defaultValue: -1,
-});
+export const getMemoryUsage = () =>
+  getSupportedPlatformInfoAsync({
+    supportedPlatforms: ['ios'],
+    getter: () => RNDeviceInfo.getMemoryUsage(),
+    defaultValue: { } as MemoryUsageInfo,
+  });
 
-export const [getProcessorUsage, getProcessorUsageSync] = getSupportedPlatformInfoFunctions({
+
+export const getProcessorUsage = () =>
+getSupportedPlatformInfoAsync({
   supportedPlatforms: ['ios'],
   getter: () => RNDeviceInfo.getProcessorUsage(),
-  syncGetter: () => -1,
   defaultValue: -1,
 });
 
+export const getSystemUptime = () =>
+  getSupportedPlatformInfoAsync({
+    supportedPlatforms: ['ios'],
+    getter: () => RNDeviceInfo.getSystemUptime(),
+    defaultValue: '',
+  });
 
-export const [getSystemUptime, getSystemUptimeSync] = getSupportedPlatformInfoFunctions({
-  supportedPlatforms: ['ios'],
-  getter: () => RNDeviceInfo.getSystemUptime(),
-  syncGetter: () => '',
-  defaultValue: '',
-});
-
-export const [getNetworkInfo, getgetNetworkInfoSync] = getSupportedPlatformInfoFunctions({
-  supportedPlatforms: ['ios'],
-  getter: () => RNDeviceInfo.getNetworkInfo(),
-  syncGetter: () => {},
-  defaultValue: {} as any,
-});
-
+export const getNetworkInfo = () =>
+  getSupportedPlatformInfoAsync({
+    supportedPlatforms: ['ios'],
+    getter: () => RNDeviceInfo.getNetworkInfo(),
+    defaultValue: { } as NetworkInfo,
+  });
 
 
 const deviceInfoEmitter = new NativeEventEmitter(NativeModules.RNDeviceInfo);
@@ -897,7 +898,7 @@ export function useBrightness(): number | null {
 export type { AsyncHookResult, DeviceType, LocationProviderInfo, PowerState };
 
 const DeviceInfo: DeviceInfoModule = {
-  getFreeMemory,
+  getMemoryUsage,
   getProcessorUsage,
   getSystemUptime,
   getNetworkInfo,

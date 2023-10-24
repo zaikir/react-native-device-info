@@ -17,3 +17,31 @@ export interface AsyncHookResult<T> {
   loading: boolean;
   result: T;
 }
+
+export interface MemoryUsageInfo {
+  free: number,
+  active: number,
+  inactive: number,
+  wired: number,
+  available: number,
+  total: number,
+  used: number,
+}
+
+export interface NetworkInfo {
+  carrierName: string
+  carrierCountry: string,
+  carrierMobileCountryCode: string,
+  carrierISOCountryCode: string,
+  carrierMobileNetworkCode: string,
+  currentIPAddress: string,
+  externalIPAddress: string,
+  cellIPAddress: string,
+  cellNetmaskAddress: string,
+  cellBroadcastAddress: string,
+  connectedToWiFi: string,
+  wiFiIPAddress: string,
+  wiFiNetmaskAddress: string,
+  wiFiBroadcastAddress: string,
+  wiFiRouterAddress: string,
+}

@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import type { DeviceType, LocationProviderInfo, PowerState, AsyncHookResult } from './types';
+import type { DeviceType, LocationProviderInfo, PowerState, AsyncHookResult, MemoryUsageInfo, NetworkInfo } from './types';
 
 export type NotchDevice = {
   brand: string;
@@ -37,27 +37,9 @@ interface HiddenNativeMethods {
   getSystemManufacturerSync: () => string;
 }
 
-interface NetworkInfo {
-  carrierName: string
-  carrierCountry: string,
-  carrierMobileCountryCode: string,
-  carrierISOCountryCode: string,
-  carrierMobileNetworkCode: string,
-  currentIPAddress: string,
-  externalIPAddress: string,
-  cellIPAddress: string,
-  cellNetmaskAddress: string,
-  cellBroadcastAddress: string,
-  connectedToWiFi: string,
-  wiFiIPAddress: string,
-  wiFiNetmaskAddress: string,
-  wiFiBroadcastAddress: string,
-  wiFiRouterAddress: string,
-}
-
 interface ExposedNativeMethods {
   getProcessorUsage: () => Promise<number>;
-  getFreeMemory: () => Promise<number>;
+  getMemoryUsage: () => Promise<MemoryUsageInfo>;
   getSystemUptime:() => Promise<string>;
   getNetworkInfo:() => Promise<NetworkInfo>;
   getAndroidId: () => Promise<string>;

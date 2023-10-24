@@ -17,7 +17,6 @@
 #import <DeviceCheck/DeviceCheck.h>
 #import "EnvironmentUtil.h"
 #import "SystemServices.h"
-#import "sysinfo.h"
 #import "CPU.h"
 
 #if !(TARGET_OS_TV)
@@ -431,35 +430,33 @@ RCT_EXPORT_METHOD(isEmulator:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromis
     }
 }
 
-
-RCT_EXPORT_METHOD(getFreeMemory:(RCTPromiseResolveBlock) resolve getFreeMemoryRejector:(RCTPromiseRejectBlock) reject) {
-    mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
-    vm_statistics_data_t info;
-
-    kern_return_t kr = host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&vm_stat, &count);
-    if (kr != KERN_SUCCESS) {
-        resolve(@(0));
-    }
-
-    double value = 0;
-    resolve(@(value));
-    return
-    
-    double value = [SystemServices sharedServices].freeMemoryinRaw + [SystemServices sharedServices].inactiveMemoryinRaw;
-    resolve(@(value));
-}
-
 RCT_EXPORT_METHOD(getMemoryUsage:(RCTPromiseResolveBlock) resolve getMemoryUsageRejector:(RCTPromiseRejectBlock) reject) {
     mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
     vm_statistics_data_t info;
 
-    kern_return_t kr = host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&vm_stat, &count);
+    kern_return_t kr = host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&info, &count);
     if (kr != KERN_SUCCESS) {
-        resolve(@(0));
+        reject(@"Error");
+        return;
     }
 
-    double value = 0;
-    resolve(@(value));
+    long free = (double)info.free_count * vm_kernel_page_size;
+    long active = (double)info.active_count * vm_kernel_page_size;
+    long inactive = (double)info.inactive_count * vm_kernel_page_size;
+    long wired = (double)info.wire_count * vm_kernel_page_size;
+    long available = (info.inactive_count + info.free_count) * vm_kernel_page_size;
+    long total = [NSProcessInfo processInfo].physicalMemory;
+    long used = total - available;
+    
+    resolve(@{
+        @"free": [NSNumber numberWithLong:free],
+        @"active": [NSNumber numberWithLong:active],
+        @"inactive": [NSNumber numberWithLong:active],
+        @"wired": [NSNumber numberWithLong:active],
+        @"available": [NSNumber numberWithLong:active],
+        @"total": [NSNumber numberWithLong:active],
+        @"used": [NSNumber numberWithLong:active]
+    });
 }
 
 
