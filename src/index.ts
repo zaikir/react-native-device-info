@@ -800,11 +800,16 @@ export function useProcessorUsage(refreshRate = 1000) {
   const [cpuUsage, setCpuUsage] = useState<{used: number, isReady: boolean}>({used: 0, isReady: false});
 
   useEffect(() => {
-    const interval = setInterval(async () => {
+    const fetchData = async () => {
       const value = await getProcessorUsage()
       setCpuUsage({isReady: true, used: value })
-    }, refreshRate)
+    }
 
+    fetchData()
+
+    const interval = setInterval(() => {
+      fetchData()
+    }, refreshRate)
 
     return () => {
       clearInterval(interval)
@@ -820,9 +825,15 @@ export function useMemoryUsage(refreshRate = 1000) {
   }>({active:0,available:0,free:0,inactive:0,total:0,used:0,wired:0,isReady:false });
 
   useEffect(() => {
-    const interval = setInterval(async () => {
+    const fetchData = async () => {
       const value = await getMemoryUsage()
       setMemoryUsage({...value, isReady: true})
+    }
+
+    fetchData()
+
+    const interval = setInterval(() => {
+      fetchData()
     }, refreshRate)
 
     return () => {
