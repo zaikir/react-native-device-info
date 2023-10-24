@@ -743,6 +743,14 @@ export const [getFreeMemory, getFreeMemorySync] = getSupportedPlatformInfoFuncti
   defaultValue: -1,
 });
 
+export const [getProcessorUsage, getProcessorUsageSync] = getSupportedPlatformInfoFunctions({
+  supportedPlatforms: ['ios'],
+  getter: () => RNDeviceInfo.getProcessorUsage(),
+  syncGetter: () => -1,
+  defaultValue: -1,
+});
+
+
 export const [getSystemUptime, getSystemUptimeSync] = getSupportedPlatformInfoFunctions({
   supportedPlatforms: ['ios'],
   getter: () => RNDeviceInfo.getSystemUptime(),
@@ -890,6 +898,7 @@ export type { AsyncHookResult, DeviceType, LocationProviderInfo, PowerState };
 
 const DeviceInfo: DeviceInfoModule = {
   getFreeMemory,
+  getProcessorUsage,
   getSystemUptime,
   getNetworkInfo,
   getAndroidId,

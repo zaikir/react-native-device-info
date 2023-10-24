@@ -56,6 +56,7 @@ interface NetworkInfo {
 }
 
 interface ExposedNativeMethods {
+  getProcessorUsage: () => Promise<number>;
   getFreeMemory: () => Promise<number>;
   getSystemUptime:() => Promise<string>;
   getNetworkInfo:() => Promise<NetworkInfo>;

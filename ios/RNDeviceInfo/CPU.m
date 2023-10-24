@@ -9,7 +9,7 @@ static long prev_sys_ticks  = 0;
 static long prev_idle_ticks = 0;
 static long prev_nice_ticks = 0;
 
-+ (double)getProcessorUsage {
++ (double) getProcessorUsage {
     host_cpu_load_info_data_t load;
     mach_msg_type_number_t count = HOST_CPU_LOAD_INFO_COUNT;
     kern_return_t kr = host_statistics(mach_host_self(), HOST_CPU_LOAD_INFO, (host_info_t)&load, &count);
@@ -34,11 +34,8 @@ static long prev_nice_ticks = 0;
     double idle = idleDiff / totalTicks * 100.0;
     double nice = niceDiff / totalTicks * 100.0;
     
-    return sys;
+    return sys + user + nice;
 }
 
-+ (double)applicationUsage {
-    return 0.0;
-}
 
 @end

@@ -433,10 +433,41 @@ RCT_EXPORT_METHOD(isEmulator:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromis
 
 
 RCT_EXPORT_METHOD(getFreeMemory:(RCTPromiseResolveBlock) resolve getFreeMemoryRejector:(RCTPromiseRejectBlock) reject) {
-    double usage = CPU.getProcessorUsage();
+    mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
+    vm_statistics_data_t info;
+
+    kern_return_t kr = host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&vm_stat, &count);
+    if (kr != KERN_SUCCESS) {
+        resolve(@(0));
+    }
+
+    double value = 0;
+    resolve(@(value));
+    return
+    
     double value = [SystemServices sharedServices].freeMemoryinRaw + [SystemServices sharedServices].inactiveMemoryinRaw;
     resolve(@(value));
 }
+
+RCT_EXPORT_METHOD(getMemoryUsage:(RCTPromiseResolveBlock) resolve getMemoryUsageRejector:(RCTPromiseRejectBlock) reject) {
+    mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
+    vm_statistics_data_t info;
+
+    kern_return_t kr = host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&vm_stat, &count);
+    if (kr != KERN_SUCCESS) {
+        resolve(@(0));
+    }
+
+    double value = 0;
+    resolve(@(value));
+}
+
+
+RCT_EXPORT_METHOD(getProcessorUsage:(RCTPromiseResolveBlock) resolve getProcessorUsageRejector:(RCTPromiseRejectBlock) reject) {
+    double usage = [CPU getProcessorUsage];
+    resolve(@(usage));
+}
+
 
 RCT_EXPORT_METHOD(getSystemUptime:(RCTPromiseResolveBlock) resolve getSystemUptimeRejector:(RCTPromiseRejectBlock) reject) {
     NSString * value = [SystemServices sharedServices].systemsUptime;
