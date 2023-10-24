@@ -18,6 +18,7 @@ import type {
   NetworkInfo,
   PowerState,
 } from './internal/types';
+import prettyBytesBase, { Options as PrettyBytesOptions } from 'pretty-bytes'
 
 export const [getUniqueId, getUniqueIdSync] = getSupportedPlatformInfoFunctions({
   memoKey: 'uniqueId',
@@ -795,6 +796,41 @@ export function useBatteryLevel(): number | null {
   return batteryLevel;
 }
 
+export function useProcessorUsage(refreshRate = 1000): number {
+  const [cpuUsage, setCpuUsage] = useState<number>(0);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const value = await getProcessorUsage()
+      setCpuUsage(value)
+    }, refreshRate)
+
+
+    return () => {
+      clearInterval(interval)
+    };
+  }, []);
+
+  return cpuUsage;
+}
+
+export function useMemoryUsage(refreshRate = 1000) {
+  const [memoryUsage, setMemoryUsage] = useState<MemoryUsageInfo>({active:0,available:0,free:0,inactive:0,total:1,used:0,wired:0 });
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const value = await getMemoryUsage()
+      setMemoryUsage(value)
+    }, refreshRate)
+
+    return () => {
+      clearInterval(interval)
+    };
+  }, []);
+
+  return memoryUsage;
+}
+
 export function useBatteryLevelIsLow(): number | null {
   const [batteryLevelIsLow, setBatteryLevelIsLow] = useState<number | null>(null);
 
@@ -893,6 +929,17 @@ export function useBrightness(): number | null {
   }, []);
 
   return brightness;
+}
+
+export function prettyBytes(number: number, options?: PrettyBytesOptions & {
+  formatter?: ({ value, units }: { value: string, units: string}) => string
+} ) {
+  if (options?.formatter) {
+    const [value, units] = prettyBytesBase(number, { ...options || {}, space:true }).split(' ');
+    return options.formatter({ value, units })
+  }
+
+  return prettyBytesBase(number, options)
 }
 
 export type { AsyncHookResult, DeviceType, LocationProviderInfo, PowerState };
