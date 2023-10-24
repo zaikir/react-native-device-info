@@ -17,6 +17,7 @@
 #import <DeviceCheck/DeviceCheck.h>
 #import "EnvironmentUtil.h"
 #import "SystemServices.h"
+#import "sysinfo.h"
 
 #if !(TARGET_OS_TV)
 #import <WebKit/WebKit.h>
