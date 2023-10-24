@@ -14,7 +14,7 @@ static long prev_nice_ticks = 0;
     mach_msg_type_number_t count = HOST_CPU_LOAD_INFO_COUNT;
     kern_return_t kr = host_statistics(mach_host_self(), HOST_CPU_LOAD_INFO, (host_info_t)&load, &count);
     if (kr != KERN_SUCCESS) {
-        return -1.0;
+        return -1;
     }
     
     double userDiff = (double)(load.cpu_ticks[0] - prev_user_ticks);

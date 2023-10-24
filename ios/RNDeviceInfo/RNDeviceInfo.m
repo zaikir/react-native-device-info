@@ -451,11 +451,11 @@ RCT_EXPORT_METHOD(getMemoryUsage:(RCTPromiseResolveBlock) resolve getMemoryUsage
     resolve(@{
         @"free": [NSNumber numberWithLong:free],
         @"active": [NSNumber numberWithLong:active],
-        @"inactive": [NSNumber numberWithLong:active],
-        @"wired": [NSNumber numberWithLong:active],
-        @"available": [NSNumber numberWithLong:active],
-        @"total": [NSNumber numberWithLong:active],
-        @"used": [NSNumber numberWithLong:active]
+        @"inactive": [NSNumber numberWithLong:inactive],
+        @"wired": [NSNumber numberWithLong:wired],
+        @"available": [NSNumber numberWithLong:available],
+        @"total": [NSNumber numberWithLong:total],
+        @"used": [NSNumber numberWithLong:used]
     });
 }
 

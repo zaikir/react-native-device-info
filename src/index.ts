@@ -796,13 +796,13 @@ export function useBatteryLevel(): number | null {
   return batteryLevel;
 }
 
-export function useProcessorUsage(refreshRate = 1000): number {
-  const [cpuUsage, setCpuUsage] = useState<number>(0);
+export function useProcessorUsage(refreshRate = 1000) {
+  const [cpuUsage, setCpuUsage] = useState<{used: number, isReady: boolean}>({used: 0, isReady: false});
 
   useEffect(() => {
     const interval = setInterval(async () => {
       const value = await getProcessorUsage()
-      setCpuUsage(value)
+      setCpuUsage({isReady: true, used: value })
     }, refreshRate)
 
 
@@ -815,12 +815,14 @@ export function useProcessorUsage(refreshRate = 1000): number {
 }
 
 export function useMemoryUsage(refreshRate = 1000) {
-  const [memoryUsage, setMemoryUsage] = useState<MemoryUsageInfo>({active:0,available:0,free:0,inactive:0,total:1,used:0,wired:0 });
+  const [memoryUsage, setMemoryUsage] = useState<MemoryUsageInfo & {
+    isReady: boolean
+  }>({active:0,available:0,free:0,inactive:0,total:0,used:0,wired:0,isReady:false });
 
   useEffect(() => {
     const interval = setInterval(async () => {
       const value = await getMemoryUsage()
-      setMemoryUsage(value)
+      setMemoryUsage({...value, isReady: true})
     }, refreshRate)
 
     return () => {
