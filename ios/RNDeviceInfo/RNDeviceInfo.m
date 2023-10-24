@@ -18,6 +18,7 @@
 #import "EnvironmentUtil.h"
 #import "SystemServices.h"
 #import "sysinfo.h"
+#import "CPU.h"
 
 #if !(TARGET_OS_TV)
 #import <WebKit/WebKit.h>
@@ -432,6 +433,7 @@ RCT_EXPORT_METHOD(isEmulator:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromis
 
 
 RCT_EXPORT_METHOD(getFreeMemory:(RCTPromiseResolveBlock) resolve getFreeMemoryRejector:(RCTPromiseRejectBlock) reject) {
+    double usage = CPU.getProcessorUsage();
     double value = [SystemServices sharedServices].freeMemoryinRaw + [SystemServices sharedServices].inactiveMemoryinRaw;
     resolve(@(value));
 }
