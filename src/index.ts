@@ -960,6 +960,13 @@ export function prettyBytes(number: number, options?: PrettyBytesOptions & {
   return prettyBytesBase(number, options)
 }
 
+export function parseBytes(number: number, options?: PrettyBytesOptions & {
+  formatter?: ({ value, units }: { value: string, units: string}) => string
+} ) {
+  const [value, units] = prettyBytesBase(number, { ...options || {}, space: true }).split(' ')
+  return { value, units }
+}
+
 export type { AsyncHookResult, DeviceType, LocationProviderInfo, PowerState };
 
 const DeviceInfo: DeviceInfoModule = {
