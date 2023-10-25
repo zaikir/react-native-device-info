@@ -58,7 +58,7 @@ export type SpeedTestHistoryEntry = {
 
 export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
   const storageKey = '___speed_test_hisoty___';
-  const { setCurrentResult } = useContext(NetworkSpeedTestRealtimeContext);
+  const { setCurrentResult, setStartedAt } = useContext(NetworkSpeedTestRealtimeContext);
   const [status, setStatus] = useState<SpeedTestStatus>('ready');
   const [history, setHistory] = useState<SpeedTestHistoryEntry[]>([]);
 
@@ -94,6 +94,7 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
 
       try {
         setStatus('testing');
+        setStartedAt(new Date().toISOString())
 
         const servers = await getSpeedTestServers();
 
@@ -150,6 +151,7 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
 
   const resetTestResults = useCallback(() => {
     setCurrentResult(null)
+    setStartedAt(null)
   }, [])
 
   const clearHistory = useCallback(() => {

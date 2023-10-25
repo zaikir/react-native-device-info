@@ -2,5 +2,6 @@ import { useContext } from 'react';
 import { NetworkSpeedTestRealtimeContext } from '../contexts/NetworkSpeedTestRealtimeContext';
 
 export function useNetworkSpeedResult() {
-  return useContext(NetworkSpeedTestRealtimeContext);
+  const { startedAt, currentResult } = useContext(NetworkSpeedTestRealtimeContext);
+  return { startedAt, currentResult }
 }
