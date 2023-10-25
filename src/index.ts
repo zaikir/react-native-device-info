@@ -20,6 +20,25 @@ import type {
 } from './internal/types';
 import prettyBytesBase, { Options as PrettyBytesOptions } from 'pretty-bytes'
 
+const { RNReactNativePing, RNDnsLookup } = NativeModules;
+
+export async function lookupIpAddress(domain: string) {
+  const ipAddress = await RNDnsLookup.getIpAddresses(domain)
+  return ipAddress
+}
+
+export async function ping(ipAddress: string, option?:{timeout: number}) {
+  const result = await RNReactNativePing.start(ipAddress, option);
+  return result;
+}
+
+export async function pingDomain(domain: string, option?:{timeout: number}) {
+  const ipAddress = await lookupIpAddress(domain)
+
+  const result = await RNReactNativePing.start(ipAddress, option);
+  return result;
+}
+
 export const [getUniqueId, getUniqueIdSync] = getSupportedPlatformInfoFunctions({
   memoKey: 'uniqueId',
   supportedPlatforms: ['android', 'ios', 'windows'],
