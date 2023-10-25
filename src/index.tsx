@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import React from 'react'
+import { PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import { Dimensions, NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import { useOnEvent, useOnMount } from './internal/asyncHookWrappers';
 import devicesWithDynamicIsland from "./internal/devicesWithDynamicIsland";
@@ -19,13 +20,24 @@ import type {
   PowerState,
 } from './internal/types';
 import prettyBytesBase, { Options as PrettyBytesOptions } from 'pretty-bytes'
+import {NetworkSpeedTestProvider as NetworkSpeedTestProviderBase} from './contexts/NetworkSpeedTestContext'
+import {NetworkSpeedTestRealtimeContextProvider} from './contexts/NetworkSpeedTestRealtimeContext'
 
 export * from './ping'
-export * from './contexts/NetworkSpeedTestContext'
-export * from './contexts/NetworkSpeedTestRealtimeContext'
-export * from './contexts/NetworkSpeedTester'
 export * from './hooks/useNetworkSpeedTest'
 export * from './hooks/useNetworkSpeedResult'
+
+export function NetworkSpeedTestProvider({
+  children,
+}: PropsWithChildren<{}>) {
+  return (
+    <NetworkSpeedTestRealtimeContextProvider>
+      <NetworkSpeedTestProviderBase>
+        {children}
+      </NetworkSpeedTestProviderBase>
+    </NetworkSpeedTestRealtimeContextProvider>
+  );
+}
 
 export const [getUniqueId, getUniqueIdSync] = getSupportedPlatformInfoFunctions({
   memoKey: 'uniqueId',

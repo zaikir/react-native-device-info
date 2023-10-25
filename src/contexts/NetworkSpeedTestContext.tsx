@@ -12,7 +12,10 @@ import {
 
 import { NetworkSpeedTestRealtimeContext } from './NetworkSpeedTestRealtimeContext';
 import {
+  DownloadTestProps,
+  PingTestProps,
   SpeedTestServer,
+  UploadTestProps,
   testDownloadSpeed,
   testPing,
   testUploadSpeed,
@@ -22,6 +25,9 @@ export type SpeedTestStatus = 'ready' | 'testing';
 
 export type SpeedTestProps = {
   maxDuration?: number;
+  downloadTestProps?: DownloadTestProps;
+  uploadTestProps?: UploadTestProps
+  pingTestProps?: PingTestProps
 };
 
 export type NetworkSpeedTestContextType = {
@@ -93,24 +99,27 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
 
         setCurrentResult({ status: 'download', speed: 0, ping: 0 });
         const downloadSpeed = await testDownloadSpeed({
-          servers,
+          servers: options?.downloadTestProps?.servers ?? servers,
           onProgress(info) {
             setCurrentResult({ ...info, status: 'download', ping: 0 });
+            options?.downloadTestProps?.onProgress?.(info)
           },
           maxDuration: options?.maxDuration,
         });
 
         setCurrentResult({ status: 'upload', speed: 0, ping: 0 });
         const uploadSpeed = await testUploadSpeed({
-          servers,
+          servers: options?.uploadTestProps?.servers ?? servers,
           onProgress(info) {
             setCurrentResult({ ...info, status: 'upload', ping: 0 });
+            options?.uploadTestProps?.onProgress?.(info)
           },
           maxDuration: options?.maxDuration,
         });
 
         setCurrentResult({ status: 'ping', speed: 0, ping: 0 });
         const ping = await testPing({
+          ...options?.pingTestProps,
           onProgress(info) {
             setCurrentResult({
               ...info,
@@ -118,6 +127,7 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
               speed: 0,
               ping: info.ping,
             });
+            options?.pingTestProps?.onProgress?.(info)
           },
         });
 
