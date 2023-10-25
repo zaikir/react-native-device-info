@@ -96,7 +96,7 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
 
         const servers = await getSpeedTestServers();
 
-        setCurrentResult({ status: 'download', speed: 0, ping: 0 });
+        setCurrentResult({ status: 'download', speed: 0, ping: 0, progress:0 });
         const downloadSpeed = await testDownloadSpeed({
           servers: options?.downloadTestProps?.servers ?? servers,
           onProgress(info) {
@@ -106,7 +106,7 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
           maxDuration: options?.maxDuration,
         });
 
-        setCurrentResult({ status: 'upload', speed: 0, ping: 0 });
+        setCurrentResult({ status: 'upload', speed: 0, ping: 0, progress:0 });
         const uploadSpeed = await testUploadSpeed({
           servers: options?.uploadTestProps?.servers ?? servers,
           onProgress(info) {
@@ -116,7 +116,7 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
           maxDuration: options?.maxDuration,
         });
 
-        setCurrentResult({ status: 'ping', speed: 0, ping: 0 });
+        setCurrentResult({ status: 'ping', speed: 0, ping: 0, progress:0 });
         const ping = await testPing({
           ...options?.pingTestProps,
           onProgress(info) {

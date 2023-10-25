@@ -11,6 +11,7 @@ export type SpeedTestRealtimeInfo = {
   status: 'download' | 'upload' | 'ping';
   speed: number;
   ping: number;
+  progress: number
 };
 
 export type NetworkSpeedTestRealtimeContextType = {

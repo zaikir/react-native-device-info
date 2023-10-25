@@ -31,7 +31,7 @@ export type PingTestProps = {
   domain?: string;
   timeout?: number;
   numberOfRetries?: number;
-  onProgress?: (info: { ping: number }) => void;
+  onProgress?: (info: { ping: number, progress: number }) => void;
 };
 
 export const testDownloadSpeed = async ({
@@ -238,7 +238,7 @@ export const testPing = async (options?: PingTestProps) => {
         }),
       ]);
 
-      options?.onProgress?.({ ping: result });
+      options?.onProgress?.({ ping: result, progress: (index + 1) / (options?.numberOfRetries ?? 5) });
 
       results.push(result);
     } catch (err) {
