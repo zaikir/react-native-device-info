@@ -34,6 +34,7 @@ export type NetworkSpeedTestContextType = {
   latestResult: SpeedTestHistoryEntry | null;
   history: SpeedTestHistoryEntry[];
   startTest: (options?: SpeedTestProps) => Promise<void>;
+  resetTestResults: () => void;
   clearHistory: () => void;
 };
 
@@ -147,6 +148,10 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
     [status],
   );
 
+  const resetTestResults = useCallback(() => {
+    setCurrentResult(null)
+  }, [])
+
   const clearHistory = useCallback(() => {
     setHistory([]);
   }, []);
@@ -167,6 +172,7 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
       latestResult,
       history,
       startTest,
+      resetTestResults,
       clearHistory,
     }),
     [status, latestResult, history, startTest],
