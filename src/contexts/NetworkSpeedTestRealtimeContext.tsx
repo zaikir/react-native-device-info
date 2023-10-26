@@ -9,13 +9,15 @@ import {
 
 export type SpeedTestRealtimeInfo = {
   status: 'download' | 'upload' | 'ping';
-  speed: number;
-  ping: number;
+  value: number;
+  progress: number
 };
 
 export type NetworkSpeedTestRealtimeContextType = {
   currentResult: SpeedTestRealtimeInfo | null;
   setCurrentResult: Dispatch<SetStateAction<SpeedTestRealtimeInfo | null>>;
+  startedAt: string | null;
+  setStartedAt: Dispatch<SetStateAction<string | null>>;
 };
 
 export const NetworkSpeedTestRealtimeContext =
@@ -24,11 +26,14 @@ export const NetworkSpeedTestRealtimeContext =
 export function NetworkSpeedTestRealtimeContextProvider({
   children,
 }: PropsWithChildren<{}>) {
+  const [startedAt, setStartedAt] = useState<string | null>(null);
   const [currentResult, setCurrentResult] =
     useState<SpeedTestRealtimeInfo | null>(null);
 
   const contextData = useMemo<NetworkSpeedTestRealtimeContextType>(
     () => ({
+      startedAt,
+      setStartedAt,
       currentResult,
       setCurrentResult,
     }),

@@ -34,6 +34,7 @@ export type NetworkSpeedTestContextType = {
   latestResult: SpeedTestHistoryEntry | null;
   history: SpeedTestHistoryEntry[];
   startTest: (options?: SpeedTestProps) => Promise<void>;
+  resetTestResults: () => void;
   clearHistory: () => void;
 };
 
@@ -57,7 +58,7 @@ export type SpeedTestHistoryEntry = {
 
 export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
   const storageKey = '___speed_test_hisoty___';
-  const { setCurrentResult } = useContext(NetworkSpeedTestRealtimeContext);
+  const { setCurrentResult, setStartedAt } = useContext(NetworkSpeedTestRealtimeContext);
   const [status, setStatus] = useState<SpeedTestStatus>('ready');
   const [history, setHistory] = useState<SpeedTestHistoryEntry[]>([]);
 
@@ -93,38 +94,38 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
 
       try {
         setStatus('testing');
+        setStartedAt(new Date().toISOString())
 
         const servers = await getSpeedTestServers();
 
-        setCurrentResult({ status: 'download', speed: 0, ping: 0 });
+        setCurrentResult({ status: 'download', value: 0, progress:0 });
         const downloadSpeed = await testDownloadSpeed({
           servers: options?.downloadTestProps?.servers ?? servers,
           onProgress(info) {
-            setCurrentResult({ ...info, status: 'download', ping: 0 });
+            setCurrentResult({ progress: info.progress, status: 'download', value: info.speed});
             options?.downloadTestProps?.onProgress?.(info)
           },
           maxDuration: options?.maxDuration,
         });
 
-        setCurrentResult({ status: 'upload', speed: 0, ping: 0 });
+        setCurrentResult({ status: 'upload', value: 0, progress:0 });
         const uploadSpeed = await testUploadSpeed({
           servers: options?.uploadTestProps?.servers ?? servers,
           onProgress(info) {
-            setCurrentResult({ ...info, status: 'upload', ping: 0 });
+            setCurrentResult({ progress: info.progress, status: 'upload', value: info.speed });
             options?.uploadTestProps?.onProgress?.(info)
           },
           maxDuration: options?.maxDuration,
         });
 
-        setCurrentResult({ status: 'ping', speed: 0, ping: 0 });
+        setCurrentResult({ status: 'ping', value: 0, progress:0 });
         const ping = await testPing({
           ...options?.pingTestProps,
           onProgress(info) {
             setCurrentResult({
               ...info,
               status: 'ping',
-              speed: 0,
-              ping: info.ping,
+              value: info.ping,
             });
             options?.pingTestProps?.onProgress?.(info)
           },
@@ -147,6 +148,11 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
     [status],
   );
 
+  const resetTestResults = useCallback(() => {
+    setCurrentResult(null)
+    setStartedAt(null)
+  }, [])
+
   const clearHistory = useCallback(() => {
     setHistory([]);
   }, []);
@@ -167,6 +173,7 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
       latestResult,
       history,
       startTest,
+      resetTestResults,
       clearHistory,
     }),
     [status, latestResult, history, startTest],
