@@ -18,6 +18,8 @@ export type DownloadTestProps = {
   servers: SpeedTestServer[];
   onProgress?: (info: { speed: number; progress: number }) => void;
   maxDuration?: number;
+  progressInterval?: number;
+  progressDivider?: number;
 };
 
 export type UploadTestProps = {
@@ -38,6 +40,8 @@ export const testDownloadSpeed = async ({
   servers,
   onProgress,
   maxDuration = 4000,
+  progressInterval = 100,
+  progressDivider = 100
 }: DownloadTestProps): Promise<number> => {
   const totalBytesPerSecond: number[] = [];
   let totalSpeed = 0;
@@ -80,8 +84,8 @@ export const testDownloadSpeed = async ({
           cacheable: false,
           background: false,
           discretionary: false,
-          progressInterval: 100,
-          progressDivider: 100,
+          progressInterval: progressInterval,
+          progressDivider: progressDivider,
           begin: () => {
             startTime = new Date().valueOf();
             if (!globalStartTime) {
