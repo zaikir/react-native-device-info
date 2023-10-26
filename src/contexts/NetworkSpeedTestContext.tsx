@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
@@ -61,6 +62,8 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
   const { setCurrentResult, setStartedAt } = useContext(NetworkSpeedTestRealtimeContext);
   const [status, setStatus] = useState<SpeedTestStatus>('ready');
   const [history, setHistory] = useState<SpeedTestHistoryEntry[]>([]);
+
+  const isMounted = useRef(false)
 
   const latestResult = useMemo(() => {
     if (!history.length) {
@@ -166,6 +169,19 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
       setHistory(items);
     })();
   }, []);
+
+  useEffect(() => {
+    if (!isMounted.current) {
+      return
+    }
+
+    isMounted.current = true;
+
+    (async () => {
+      await AsyncStorage.setItem(storageKey, JSON.stringify(history))
+    })()
+    
+  }, [history])
 
   const contextData = useMemo<NetworkSpeedTestContextType>(
     () => ({
