@@ -25,9 +25,9 @@ export type SpeedTestStatus = 'ready' | 'testing';
 
 export type SpeedTestProps = {
   maxDuration?: number;
-  downloadTestProps?: DownloadTestProps;
-  uploadTestProps?: UploadTestProps
-  pingTestProps?: PingTestProps
+  downloadTestProps?: Partial<DownloadTestProps>;
+  uploadTestProps?: Partial<UploadTestProps>;
+  pingTestProps?: Partial<PingTestProps>;
 };
 
 export type NetworkSpeedTestContextType = {
@@ -103,6 +103,7 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
 
         setCurrentResult({ status: 'download', value: 0, progress:0 });
         const downloadSpeed = await testDownloadSpeed({
+          ...options?.downloadTestProps,
           servers: options?.downloadTestProps?.servers ?? servers,
           onProgress(info) {
             setCurrentResult({ progress: info.progress, status: 'download', value: info.speed});
@@ -113,6 +114,7 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
 
         setCurrentResult({ status: 'upload', value: 0, progress:0 });
         const uploadSpeed = await testUploadSpeed({
+          ...options?.uploadTestProps,
           servers: options?.uploadTestProps?.servers ?? servers,
           onProgress(info) {
             setCurrentResult({ progress: info.progress, status: 'upload', value: info.speed });
