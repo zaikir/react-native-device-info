@@ -18,7 +18,7 @@ import type {
   NetworkInfo,
   PowerState,
 } from './internal/types';
-import prettyBytesBase, { Options as PrettyBytesOptions } from 'pretty-bytes'
+import prettyBytesBase, { Options as PrettyBytesBaseOptions } from 'pretty-bytes'
 
 export * from './contexts'
 export * from './ping'
@@ -949,21 +949,38 @@ export function useBrightness(): number | null {
   return brightness;
 }
 
-export function prettyBytes(number: number, options?: PrettyBytesOptions & {
+type PrettyBytesOptions = PrettyBytesBaseOptions & {
+  placeholder?: {
+    enable?: boolean,
+    digits?: number
+  },
   formatter?: ({ value, units }: { value: string, units: string}) => string
-} ) {
+}
+
+export function prettyBytes(number: number, options?: PrettyBytesOptions ) {
+  if (!number && (options?.placeholder?.enable ?? true)) {
+    const fakeNumber = parseInt([...new Array(options?.placeholder?.digits ?? 2).keys()].map(() => '9').join(''))
+    const [originalValue] = prettyBytesBase(fakeNumber, { ...options || {}, space:true }).split(' ')
+    const units = 'B'
+    const value = originalValue.replace(/[0-9]/g, "-");
+
+    if (options?.formatter) {
+      return options.formatter({ value, units }) 
+    }
+
+    return  `${value}${(options?.space ?? true)? ' ': ''}${units}`
+  }
+
   if (options?.formatter) {
-    const [value, units] = prettyBytesBase(number, { ...options || {}, space:true }).split(' ');
-    return options.formatter({ value, units })
+    let [value, units] = prettyBytesBase(number, { ...options || {}, space:true }).split(' ');
+    return options.formatter({ value, units })  
   }
 
   return prettyBytesBase(number, options)
 }
 
-export function parseBytes(number: number, options?: PrettyBytesOptions & {
-  formatter?: ({ value, units }: { value: string, units: string}) => string
-} ) {
-  const [value, units] = prettyBytesBase(number, { ...options || {}, space: true }).split(' ')
+export function parseBytes(number: number, options?: PrettyBytesOptions) {
+  const [value, units] = prettyBytes(number, { ...options || {}, space: true }).split(' ')
   return { value, units }
 }
 

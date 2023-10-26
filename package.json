@@ -1,6 +1,6 @@
 {
   "name": "@kirz/react-native-device-info",
-  "version": "1.4.9",
+  "version": "1.4.10",
   "description": "Get device information using react-native",
   "react-native": "src/index.ts",
   "types": "lib/typescript/index.d.ts",
