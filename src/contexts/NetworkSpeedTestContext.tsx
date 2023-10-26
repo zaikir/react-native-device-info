@@ -174,10 +174,9 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
 
   useEffect(() => {
     if (!isMounted.current) {
+      isMounted.current = true;
       return
     }
-
-    isMounted.current = true;
 
     (async () => {
       await AsyncStorage.setItem(storageKey, JSON.stringify(history))
