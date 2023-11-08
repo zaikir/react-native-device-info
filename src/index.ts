@@ -808,7 +808,7 @@ export function useProcessorUsage(refreshRate = 1000) {
   useEffect(() => {
     const fetchData = async () => {
       const value = await getProcessorUsage()
-      setCpuUsage({isReady: true, used: value })
+      setCpuUsage({isReady: true, used: isNaN(value) ? 0: value })
     }
 
     fetchData()
