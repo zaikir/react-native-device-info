@@ -28,6 +28,13 @@ export interface MemoryUsageInfo {
   used: number,
 }
 
+
+export interface StorageUsageInfo {
+  free: number,
+  used: number,
+  total: number,
+}
+
 export interface NetworkInfo {
   carrierName: string
   carrierCountry: string,

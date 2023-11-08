@@ -17,6 +17,7 @@ import type {
   MemoryUsageInfo,
   NetworkInfo,
   PowerState,
+  StorageUsageInfo,
 } from './internal/types';
 import prettyBytesBase, { Options as PrettyBytesBaseOptions } from 'pretty-bytes'
 
@@ -848,6 +849,36 @@ export function useMemoryUsage(refreshRate = 1000) {
 
   return memoryUsage;
 }
+
+
+export function useStorageUsage(refreshRate = 5000) {
+  const [storageUsage, setStorageUsage] = useState<StorageUsageInfo & {
+    isReady: boolean
+  }>({total:0,used:0,free: 0,isReady:false });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [free, total] = await Promise.all([
+        getFreeDiskStorage(),
+        getTotalDiskCapacity(),
+      ])
+      setStorageUsage({free, used: total - free, total, isReady: true})
+    }
+
+    fetchData()
+
+    const interval = setInterval(() => {
+      fetchData()
+    }, refreshRate)
+
+    return () => {
+      clearInterval(interval)
+    };
+  }, []);
+
+  return storageUsage;
+}
+
 
 export function useBatteryLevelIsLow(): number | null {
   const [batteryLevelIsLow, setBatteryLevelIsLow] = useState<number | null>(null);
