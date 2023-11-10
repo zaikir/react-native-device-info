@@ -28,6 +28,7 @@ export type SpeedTestProps = {
   downloadTestProps?: Partial<DownloadTestProps>;
   uploadTestProps?: Partial<UploadTestProps>;
   pingTestProps?: Partial<PingTestProps>;
+  tests?: ('download' | 'upload' | 'ping')[]
 };
 
 export type NetworkSpeedTestContextType = {
@@ -91,60 +92,76 @@ export function NetworkSpeedTestProvider({ children }: PropsWithChildren<{}>) {
   const startTest = useCallback(
     async (options?: SpeedTestProps) => {
       if (status !== 'ready') {
-        console.warn('Test is already started');
-        return;
+        throw new Error('Test is already started')
       }
 
       try {
         setStatus('testing');
         setStartedAt(new Date().toISOString())
 
+        const tests = options?.tests ?? ['download', 'upload', 'ping']
         const servers = await getSpeedTestServers();
 
-        setCurrentResult({ status: 'download', value: 0, progress:0 });
-        const downloadSpeed = await testDownloadSpeed({
-          ...options?.downloadTestProps,
-          servers: options?.downloadTestProps?.servers ?? servers,
-          onProgress(info) {
-            setCurrentResult({ progress: info.progress, status: 'download', value: info.speed});
-            options?.downloadTestProps?.onProgress?.(info)
-          },
-          maxDuration: options?.maxDuration,
-        });
+        let downloadSpeed = 0
+        if (tests.includes('download')) {
+          setCurrentResult({ status: 'download', value: 0, progress:0 });
+          downloadSpeed = await testDownloadSpeed({
+            ...options?.downloadTestProps,
+            servers: options?.downloadTestProps?.servers ?? servers,
+            onProgress(info) {
+              setCurrentResult({ progress: info.progress, status: 'download', value: info.speed});
+              options?.downloadTestProps?.onProgress?.(info)
+            },
+            maxDuration: options?.maxDuration,
+          });
 
-        setCurrentResult({ status: 'upload', value: 0, progress:0 });
-        const uploadSpeed = await testUploadSpeed({
-          ...options?.uploadTestProps,
-          servers: options?.uploadTestProps?.servers ?? servers,
-          onProgress(info) {
-            setCurrentResult({ progress: info.progress, status: 'upload', value: info.speed });
-            options?.uploadTestProps?.onProgress?.(info)
-          },
-          maxDuration: options?.maxDuration,
-        });
+        }
+        
+        let uploadSpeed = 0
+        if (tests.includes('download')) {
+          setCurrentResult({ status: 'upload', value: 0, progress:0 });
+          uploadSpeed = await testUploadSpeed({
+            ...options?.uploadTestProps,
+            servers: options?.uploadTestProps?.servers ?? servers,
+            onProgress(info) {
+              setCurrentResult({ progress: info.progress, status: 'upload', value: info.speed });
+              options?.uploadTestProps?.onProgress?.(info)
+            },
+            maxDuration: options?.maxDuration,
+          });
+        }
 
-        setCurrentResult({ status: 'ping', value: 0, progress:0 });
-        const ping = await testPing({
-          ...options?.pingTestProps,
-          onProgress(info) {
-            setCurrentResult({
-              ...info,
-              status: 'ping',
-              value: info.ping,
-            });
-            options?.pingTestProps?.onProgress?.(info)
-          },
-        });
+        let ping = 0
+        if (tests.includes('ping')) {
+          setCurrentResult({ status: 'ping', value: 0, progress:0 });
+          ping = await testPing({
+            ...options?.pingTestProps,
+            onProgress(info) {
+              setCurrentResult({
+                ...info,
+                status: 'ping',
+                value: info.ping,
+              });
+              options?.pingTestProps?.onProgress?.(info)
+            },
+          });
+        }
+
+        const result = {
+          downloadSpeed,
+          uploadSpeed,
+          ping,
+        }
 
         setHistory((prev) => [
           {
             date: new Date().toISOString(),
-            downloadSpeed,
-            uploadSpeed,
-            ping,
+            ...result
           },
           ...prev,
         ]);
+
+        return result
       } finally {
         setStatus('ready');
         setCurrentResult(null);
