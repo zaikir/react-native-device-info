@@ -35,7 +35,11 @@ export type NetworkSpeedTestContextType = {
   status: SpeedTestStatus;
   latestResult: SpeedTestHistoryEntry | null;
   history: SpeedTestHistoryEntry[];
-  startTest: (options?: SpeedTestProps) => Promise<void>;
+  startTest: (options?: SpeedTestProps) => Promise<{
+    downloadSpeed: number;
+    uploadSpeed: number;
+    ping: number;
+  }>;
   resetTestResults: () => void;
   clearHistory: () => void;
 };
