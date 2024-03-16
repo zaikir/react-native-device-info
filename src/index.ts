@@ -983,7 +983,8 @@ export function useBrightness(): number | null {
 type PrettyBytesOptions = PrettyBytesBaseOptions & {
   placeholder?: {
     enable?: boolean,
-    digits?: number
+    digits?: number,
+    units?: string
   },
   formatter?: ({ value, units }: { value: string, units: string}) => string
 }
@@ -992,7 +993,7 @@ export function prettyBytes(number: number, options?: PrettyBytesOptions ) {
   if (!number && (options?.placeholder?.enable ?? true)) {
     const fakeNumber = parseInt([...new Array(options?.placeholder?.digits ?? 2).keys()].map(() => '9').join(''))
     const [originalValue] = prettyBytesBase(fakeNumber, { ...options || {}, space:true }).split(' ')
-    const units = 'B'
+    const units = options?.placeholder?.units ?? 'MB'
     const value = originalValue.replace(/[0-9]/g, "-");
 
     if (options?.formatter) {
