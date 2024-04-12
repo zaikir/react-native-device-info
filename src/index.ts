@@ -1,5 +1,5 @@
 import { PropsWithChildren, useCallback, useEffect, useState } from 'react';
-import { Dimensions, NativeEventEmitter, NativeModules, Platform } from 'react-native';
+import { Dimensions, NativeEventEmitter, NativeModules, PixelRatio, Platform } from 'react-native';
 import { useOnEvent, useOnMount } from './internal/asyncHookWrappers';
 import devicesWithDynamicIsland from "./internal/devicesWithDynamicIsland";
 import devicesWithNotch from './internal/devicesWithNotch';
@@ -878,6 +878,35 @@ export function useStorageUsage(refreshRate = 5000) {
 
   return storageUsage;
 }
+
+
+export function useDisplayDetails() {
+  function getAspectRatio(width: number, height: number) {
+    // @ts-ignore
+    const gcd = function (a: number, b: number) {
+      if (b < 0.0000001) return a;
+      return gcd(b, Math.floor(a % b));
+    };
+
+    const aspectRatio = gcd(width, height);
+
+    return `${width / aspectRatio}:${height / aspectRatio}`;
+  }
+
+  const density = PixelRatio.get();
+  const width = Dimensions.get('screen').width * density;
+  const height = Dimensions.get('screen').height * density;
+  const size = Math.sqrt(width * width + height * height) / (density * 160);
+
+  return {
+    screenSize: `${Math.floor(size * 10) / 10}”`,
+    aspectRatio: getAspectRatio(height, width),
+    pixelDensity: `${density * 160} PPI`,
+    realScreenWidth: width,
+    realScreenHeight: height,
+  }
+}
+
 
 
 export function useBatteryLevelIsLow(): number | null {
